@@ -22,32 +22,21 @@ function getDataFromApi(searchTerm){
   return $.ajax(settings);
 }
 
-function test(){
-	console.log(state.words[0]);
-	console.log(state.words[1]);
-	console.log(state.words[2]);
+function displayFirstResult(){
+	console.log('working');
+	setTimeout(function(){
+		for(var i=0; i < state.words[0].definitions.length; i++){
+			console.log(state.words[0].definitions[i].definition);
+			$('.js-search-results').append('<p>' + state.words[0].definitions[i].definition + '</p>');
+		}
+		$('.next-button').html('<button>Next</button>');
+	}, 3000);
+
 }
 
-/*function storeResults(data, search){
-
-	/*console.log(data);
-	if(i===0){
-		state.words[0].definitions = data.results;
-
-	}
-	else{
-		state.words[i].definitions = data.results;
-
-	}
-
-	i++;
-
-//test();
-			state.words[i].definitions = data.results;
-			i++;
-
-	
-}*/
+function emptyScreen(){
+	$('h1, form, button').remove();
+}
 
 function createWordObjectArray(state){
 	var words = $(".js-query").val().split(" ");
@@ -63,17 +52,15 @@ function createWordObjectArray(state){
 				.then(function(data) {
 					//console.log(data); 
 					state.words[j].definitions = data.results;
-					console.log(state.words[j]);
+					//console.log(state.words[j]);
 				})
 				.catch(function(err){
 					console.log(err);
 				})
 		})(i);
-
-
-
 	}
 	//console.log(state);
+
 }
 
 
@@ -81,7 +68,9 @@ function watchSubmit() {
   $('.submitButton').on("click", function(e) {
     e.preventDefault();
     createWordObjectArray(state);
-    
+    emptyScreen();
+    	    displayFirstResult();
+
   });
 }
 

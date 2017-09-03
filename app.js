@@ -4,22 +4,22 @@ var state = {
 	words: []
 };
 
-function getDataFromApi(searchTerm, callback){
+function getDataFromApi(searchTerm){
 	  var settings = {
     url: 'https://wordsapiv1.p.mashape.com/words/' + searchTerm + '',
     data: {},
     dataType: 'json',
     type: 'GET',
-    success: function(data){
+   /* success: function(data){
       callback(data, searchTerm);
     },
-    error: function(err) { alert(err); },
+    error: function(err) { alert(err); },*/
     beforeSend: function(xhr) {
     xhr.setRequestHeader("X-Mashape-Authorization", "5QNhUGUmVamshQCbuFO6ykRJBCqFp1nqhQgjsnNahs0JInCns7");
       }
   };
 
-  $.ajax(settings);
+  return $.ajax(settings);
 }
 
 function test(){
@@ -28,9 +28,9 @@ function test(){
 	console.log(state.words[2]);
 }
 
-function storeResults(data, search){
+/*function storeResults(data, search){
 
-	
+	/*console.log(data);
 	if(i===0){
 		state.words[0].definitions = data.results;
 
@@ -42,9 +42,12 @@ function storeResults(data, search){
 
 	i++;
 
-test();
+//test();
+			state.words[i].definitions = data.results;
+			i++;
+
 	
-}
+}*/
 
 function createWordObjectArray(state){
 	var words = $(".js-query").val().split(" ");
@@ -55,9 +58,22 @@ function createWordObjectArray(state){
 		}
 		state.words.push(word);
 
-		getDataFromApi(state.words[i].word, storeResults);
+		(function(j) {		
+			getDataFromApi(state.words[j].word)
+				.then(function(data) {
+					//console.log(data); 
+					state.words[j].definitions = data.results;
+					console.log(state.words[j]);
+				})
+				.catch(function(err){
+					console.log(err);
+				})
+		})(i);
+
+
+
 	}
-	
+	//console.log(state);
 }
 
 

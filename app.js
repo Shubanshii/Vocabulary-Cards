@@ -1,44 +1,80 @@
-var WORDS_BASE_URL = 'https://wordsapiv1.p.mashape.com/words/';
-var i=0;
+var baseURL = 'https://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=';
+var suffixURL = '&apikey=wwaDFEhNeysOIwAWZS9fczjtRAnhJFGk';
+var placeholderVal = 0;
 var state = {
 	words: []
 };
-var firstResultDisplayed = false;
-var firstWordDisplayed = false;
 
-function getDataFromApi(searchTerm){
-	  var settings = {
-    url: 'https://wordsapiv1.p.mashape.com/words/' + searchTerm + '',
-    data: {},
-    dataType: 'json',
-    type: 'GET',
-   /* success: function(data){
-      callback(data, searchTerm);
-    },
-    error: function(err) { alert(err); },*/
-    beforeSend: function(xhr) {
-    xhr.setRequestHeader("X-Mashape-Authorization", "5QNhUGUmVamshQCbuFO6ykRJBCqFp1nqhQgjsnNahs0JInCns7");
-      }
-  };
+function getDataFromApi(searchTerm, callback) {
+	var URL = baseURL + searchTerm + suffixURL;
+	$.getJSON(URL, callback);
 
-  return $.ajax(settings);
 }
 
+function emptyScreen(){
+	$('h1, form, button, p').remove();
+}
+
+function updateDefinitions(data) {
+
+	searchTerm = state.words[placeholderVal].word;
+	for(var i = 0; i < data.results.length; i++) {
+		if(data.results[i].headword === searchTerm) {
+			state.words[placeholderVal].definitions.push(data.results[i].senses[0].definition[0]);
+		}
+		else {
+			console.log(false);
+		}
+	}
+	placeholderVal++;
+}
+
+/*function loadAPI(y)
+{
+  var curTerm = state.words[0].word;
+  //API CALL HERE
+  var URL = baseURL + curTerm + suffixURL;
+  $.getJSON(URL)
+      //API PROMISE --> .then()
+    .then(function(data) {
+    	for(var x = 0; x < data.results.length; x++) {
+		if(data.results[x].headword === curTerm) {
+			state.words[y].definitions.push(data.results[x].senses[0].definition[0]);
+		}
+		else {
+			console.log(false);
+		}
+	}
+    })
+  let fakeData = 'this is fake data';
+  state.arr.push(fakeData);
+  if(y < state.words.length)
+  { loadAPI(++y); }
+  else{ /*displayFirstResult() }
+  //END API PROMISE
+}*/
+
+function displayFirstDefinitions(data) {
+	console.log(data);
+}
+
+//displays word and next button.  button increments placeholderVal and fetches next definition.
 function displayNextWord() {
-	$('.js-search-results').html('<p>' + state.words[i].word + '</p>');
+	$('.js-search-results').html('<p>' + state.words[placeholderVal].word + '</p>');
 	$('.next-index-button').html('<button class="next-index-button">Next</button>');
 	$('button.next-index-button').on('click', function(){
 		console.log('working');
 		emptyScreen();
-		i++;
-		displayNextResult();
+		placeholderVal++;
+		fetchNextDefinitions();
 	});
 }
 
+//displays definitions and next button
 function displayNextResult(){
-	for(var x=0; x < state.words[i].definitions.length; x++){
-			console.log(state.words[i].definitions[x].definition);
-			$('.js-search-results').append('<p>' + state.words[i].definitions[x].definition + '</p>');
+	for(var x=0; x < state.words[placeholderVal].definitions.length; x++){
+			console.log(state.words[placeholderVal].definitions[x]);
+			$('.js-search-results').append('<p>' + state.words[placeholderVal].definitions[x] + '</p>');
 		}
 	$('.next-button').html('<button class="next-button">Next</button>');
 	$('button.next-button').on('click', function(){
@@ -47,71 +83,57 @@ function displayNextResult(){
    	});
 }
 
-function displayFirstWord(){
-	console.log(state.words[0].word);
-	$('.js-search-results').html('<p>' + state.words[0].word + '</p>');
-	$('.next-index-button').html('<button class="next-index-button">Next</button>');
-	firstWordDisplayed = true;
-	$('button.next-index-button').on('click', function(){
-		emptyScreen();
-		i++;
-		displayNextResult();
-	});
-}
-
-function displayFirstResult(){
-	setTimeout(function(){
-		for(var i=0; i < state.words[0].definitions.length; i++){
-			console.log(state.words[0].definitions[i].definition);
-			$('.js-search-results').append('<p>' + state.words[0].definitions[i].definition + '</p>');
+//updates state with definitions; NTS: shouldn't need a separate function for first index
+function updateState(data) {
+	console.log(data.results[0].senses[0].definition !== undefined );
+	console.log(data.results);
+	curTerm = state.words[placeholderVal].word;
+	console.log(curTerm);
+	for(var i = 0; i < data.results.length; i++) {
+		if(data.results[i].headword === curTerm && (data.results[i].senses[0].definition !== undefined || data.results[i].senses[0].signpost !== undefined)) {
+			if(data.results[i].senses[0].definition !== undefined) {
+				state.words[placeholderVal].definitions.push(data.results[i].senses[0].definition[0]);
+			}
+			else if (data.results[i].senses[0].signpost !== undefined) {
+				state.words[placeholderVal].definitions.push(data.results[i].senses[0].signpost);
+			}
 		}
-		$('.next-button').html('<button class="next-button">Next</button>');
-		   	$('button.next-button').on('click', function(){
-		   	emptyScreen();
-   			displayFirstWord();
-   	});
-	}, 3000);
-	firstResultDisplayed = true;
+		else {
+			console.log(false);
+		}
+	}
+	displayNextResult();
+
 }
 
-function emptyScreen(){
-	$('h1, form, button, p').remove();
+//grabs definitions
+function fetchNextDefinitions() {
+	getDataFromApi(state.words[placeholderVal].word, updateState);
 }
 
-function createWordObjectArray(state){
+function createWordObjectArray(state) {
 	var words = $(".js-query").val().split(" ");
-	for(var i=0; i<words.length; i++){
+	for(var i=0; i<words.length; i++) {
 		var word = {
 			word: words[i],
-			definitions: ''
+			definitions: []
 		}
 		state.words.push(word);
-
-		(function(j) {		
-			getDataFromApi(state.words[j].word)
-				.then(function(data) {
-					//console.log(data); 
-					state.words[j].definitions = data.results;
-					//console.log(state.words[j]);
-				})
-				.catch(function(err){
-					console.log(err);
-				})
-		})(i);
+		//getDataFromApi(state.words[i].word, updateDefinitions);
 	}
-	//console.log(state);
+	//console.log(state);	
+	fetchNextDefinitions();
 
 }
-
 
 function watchSubmit() {
   $('.submitButton').on("click", function(e) {
     e.preventDefault();
+    //getDataFromApi("rock", displayDictionaryData);
     createWordObjectArray(state);
     emptyScreen();
-    	    displayFirstResult();
-
-
+    console.log(state);
+    //loadAPI(0);
   });
 }
 

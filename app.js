@@ -90,14 +90,17 @@ function updateState(data) {
 	curTerm = state.words[placeholderVal].word;
 	console.log(curTerm);
 	for(var i = 0; i < data.results.length; i++) {
-		if(data.results[i].headword === curTerm && (data.results[i].senses[0].definition !== undefined || data.results[i].senses[0].signpost !== undefined)) {
+		if(data.results[i].senses !== null) {
+			if(data.results[i].headword === curTerm && (data.results[i].senses[0].definition !== undefined || data.results[i].senses[0].signpost !== undefined)) {
 			if(data.results[i].senses[0].definition !== undefined) {
 				state.words[placeholderVal].definitions.push(data.results[i].senses[0].definition[0]);
 			}
 			else if (data.results[i].senses[0].signpost !== undefined) {
 				state.words[placeholderVal].definitions.push(data.results[i].senses[0].signpost);
 			}
+		}		
 		}
+
 		else {
 			console.log(false);
 		}

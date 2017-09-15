@@ -5,89 +5,150 @@ var state = {
 	words: []
 };
 
+
+
 function getDataFromApi(searchTerm, callback) {
 	var URL = baseURL + searchTerm + suffixURL;
 	$.getJSON(URL, callback);
 
 }
 
-function emptyScreen(){
-	$('h1, form, button, p').remove();
-}
-
-function updateDefinitions(data) {
-
-	searchTerm = state.words[placeholderVal].word;
-	for(var i = 0; i < data.results.length; i++) {
-		if(data.results[i].headword === searchTerm) {
-			state.words[placeholderVal].definitions.push(data.results[i].senses[0].definition[0]);
-		}
-		else {
-			console.log(false);
-		}
-	}
-	placeholderVal++;
-}
-
-/*function loadAPI(y)
-{
-  var curTerm = state.words[0].word;
-  //API CALL HERE
-  var URL = baseURL + curTerm + suffixURL;
-  $.getJSON(URL)
-      //API PROMISE --> .then()
-    .then(function(data) {
-    	for(var x = 0; x < data.results.length; x++) {
-		if(data.results[x].headword === curTerm) {
-			state.words[y].definitions.push(data.results[x].senses[0].definition[0]);
-		}
-		else {
-			console.log(false);
-		}
-	}
-    })
-  let fakeData = 'this is fake data';
-  state.arr.push(fakeData);
-  if(y < state.words.length)
-  { loadAPI(++y); }
-  else{ /*displayFirstResult() }
-  //END API PROMISE
-}*/
-
-function displayFirstDefinitions(data) {
-	console.log(data);
-}
-
-//displays word and next button.  button increments placeholderVal and fetches next definition.
-function displayNextWord() {
-	$('.js-search-results').html('<p>' + state.words[placeholderVal].word + '</p>');
-	$('.next-index-button').html('<button class="next-index-button">Next</button>');
-	$('button.next-index-button').on('click', function(){
-		console.log('working');
-		emptyScreen();
-		placeholderVal++;
-		fetchNextDefinitions();
+function watchRestart() {
+	$('.restart').on('click', function() {
+		location.reload();
 	});
 }
 
-//displays definitions and next button
-function displayNextResult(){
-	for(var x=0; x < state.words[placeholderVal].definitions.length; x++){
-			console.log(state.words[placeholderVal].definitions[x]);
-			$('.js-search-results').append('<p>' + state.words[placeholderVal].definitions[x] + '</p>');
-		}
-	$('.next-button').html('<button class="next-button">Next</button>');
-	$('button.next-button').on('click', function(){
-	 	emptyScreen();
-   		displayNextWord();
-   	});
+/*function displayLastResult() {
+	$('main').html(cardTemplate);
+	$('.show').on('click', function(){
+		$('h1').removeClass('hidden');
+		$('.show').replaceWith('<a href="#" class="restart btn btn-red">Home Page</a>');
+		watchRestart();
+
+	});
+}*/
+
+/*function watchNext() {
+	$('.next').on('click', function() {
+		displayLastResult();
+	});
+}*/
+
+/*displays definitions.  I'm considering having the definition appear on the same screen.  
+Also displays the button and includes its functionality*/
+
+
+/*function displayNextResult() {
+	$('body').html(cardTemplate);
+	$('.show').on('click', function(){
+		$('h1').removeClass('hidden');
+		$('.show').replaceWith('<a href="#" class="next btn btn-red">Next</a>');
+		watchNext();
+
+	});
+
+
+}*/
+
+/*empties screen to make room for the next screen's content.  Empties children, descendants and texts from 'main' and eliminates
+header and footer*/
+function emptyScreen() {
+	//$('main').empty();
+	$("main, header, footer").detach();
 }
 
-//updates state with definitions; NTS: shouldn't need a separate function for first index
+//watches click of next button.  goes back to API for next card
+function watchNext(state) {
+	$('.next').on('click', function() {
+		placeholderVal++;
+		fetchNextDefinitions();
+	});
+	
+}
+
+//displays last result with new button
+function displayLastResult() {
+	var curTerm = state.words[placeholderVal].word;
+	var cardTemplate = (
+	'<main class="mt-5">' + 
+		'<div class="container">' +
+			'<div class="row">' + 
+				'<div class="col-md-12 mb-4">' +
+					'<div class="card">' + 
+						'<div class="card-body">' + 
+							'<h1 class="card-title hidden">' + curTerm + '</h4>' + 
+							'<ul>' + 
+							'</ul>' + 
+						'</div>' + 
+					'</div>' +
+				'</div>' +
+			'</div>' + 
+		'</div>' +
+	'</main>'
+	);
+	//does this risk popping up information in front of user?
+	$('body').html(cardTemplate);
+	/*'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' +
+	'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' + */
+	for(var x=0; x < state.words[placeholderVal].definitions.length; x++){
+		console.log(state.words[placeholderVal].definitions[x]);
+		$('ul').append('<li class="card-text"><h3>' + state.words[placeholderVal].definitions[x] + '<h3></li>');
+	}
+	$('ul').append('<a href="#" class="show btn btn-indigo">Show</a>');
+	$('.show').on('click', function(){
+		$('h1').removeClass('hidden');
+		$('.show').replaceWith('<a href="#" class="restart btn btn-red">Home Page</a>');
+		watchRestart();
+
+	});
+}
+
+//displays definitions
+function displayNextResult() {
+	var curTerm = state.words[placeholderVal].word;
+	var cardTemplate = (
+	'<main class="mt-5">' + 
+		'<div class="container">' +
+			'<div class="row">' + 
+				'<div class="col-md-12 mb-4">' +
+					'<div class="card">' + 
+						'<div class="card-body">' + 
+							'<h1 class="card-title hidden">' + curTerm + '</h4>' + 
+							'<ul>' + 
+							'</ul>' + 
+						'</div>' + 
+					'</div>' +
+				'</div>' +
+			'</div>' + 
+		'</div>' +
+	'</main>'
+	);
+	//does this risk popping up information in front of user?
+	$('body').html(cardTemplate);
+	/*'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' +
+	'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' + */
+	for(var x=0; x < state.words[placeholderVal].definitions.length; x++){
+		console.log(state.words[placeholderVal].definitions[x]);
+		$('ul').append('<li class="card-text"><h3>' + state.words[placeholderVal].definitions[x] + '<h3></li>');
+	}
+	$('ul').append('<a href="#" class="show btn btn-indigo">Show</a>');
+	$('.show').on('click', function(){
+		$('h1').removeClass('hidden');
+		$('.show').replaceWith('<a href="#" class="next btn btn-red">Next</a>');
+		watchNext();
+
+	});
+
+	
+}
+
+/*updates the definitions property of each object in state.words array, so they correspond with the correct word
+this function is called as the user displays each word*/
 function updateState(data) {
 	console.log(data.results[0].senses[0].definition !== undefined );
 	console.log(data.results);
-	curTerm = state.words[placeholderVal].word;
+	var curTerm = state.words[placeholderVal].word;
 	console.log(curTerm);
 	for(var i = 0; i < data.results.length; i++) {
 		if(data.results[i].senses !== null) {
@@ -105,16 +166,22 @@ function updateState(data) {
 			console.log(false);
 		}
 	}
-	displayNextResult();
+	if(placeholderVal === state.words.length - 1){
+		displayLastResult();
+	}else {	
+		displayNextResult();
+	}
 
 }
 
-//grabs definitions
+//grabs definitions from API and initiates callback function
 function fetchNextDefinitions() {
+	console.log(state);
 	getDataFromApi(state.words[placeholderVal].word, updateState);
 }
 
-function createWordObjectArray(state) {
+//updates the words array in the state variable with objects.  Each object contains a word and an empty array called 'definitions'
+function createWordObjectArray() {
 	var words = $(".js-query").val().split(" ");
 	for(var i=0; i<words.length; i++) {
 		var word = {
@@ -122,22 +189,21 @@ function createWordObjectArray(state) {
 			definitions: []
 		}
 		state.words.push(word);
-		//getDataFromApi(state.words[i].word, updateDefinitions);
 	}
-	//console.log(state);	
-	fetchNextDefinitions();
-
 }
 
+
+
+//watches for user to hit button to begin project
 function watchSubmit() {
-  $('.submitButton').on("click", function(e) {
-    e.preventDefault();
-    //getDataFromApi("rock", displayDictionaryData);
-    createWordObjectArray(state);
-    emptyScreen();
-    console.log(state);
-    //loadAPI(0);
-  });
+	$('.start-button').on("click", function(e) {
+		e.preventDefault();
+		createWordObjectArray();
+		emptyScreen();
+		fetchNextDefinitions();
+		//displayNextResult();
+
+	})
 }
 
 $(function(){watchSubmit();});

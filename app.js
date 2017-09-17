@@ -146,7 +146,7 @@ function displayNextResult() {
 /*updates the definitions property of each object in state.words array, so they correspond with the correct word
 this function is called as the user displays each word*/
 function updateState(data) {
-	console.log(data.results[0].senses[0].definition !== undefined );
+	//console.log(data.results[0].senses[0].definition !== undefined );
 	console.log(data.results);
 	var curTerm = state.words[placeholderVal].word;
 	console.log(curTerm);
@@ -182,7 +182,7 @@ function fetchNextDefinitions() {
 
 //updates the words array in the state variable with objects.  Each object contains a word and an empty array called 'definitions'
 function createWordObjectArray() {
-	var words = $(".js-query").val().split(" ");
+	var words = $(".js-query").val().toLowerCase().split(/[ ,!.";:-]+/).filter(Boolean);
 	for(var i=0; i<words.length; i++) {
 		var word = {
 			word: words[i],

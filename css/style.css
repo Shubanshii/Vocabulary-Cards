@@ -2,3 +2,7 @@
 .hidden {
 	display: none;
 }
+
+.form-inline .form-control {
+    width: 100%;
+}

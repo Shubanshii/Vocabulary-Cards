@@ -183,9 +183,17 @@ function fetchNextDefinitions() {
 	getDataFromApi(state.words[placeholderVal].word, updateState);
 }
 
+function ifFormEmpty() {
+	alert('Please enter words before beginning.');
+	location.reload();
+}
+
 //updates the words array in the state variable with objects.  Each object contains a word and an empty array called 'definitions'
 function createWordObjectArray() {
 	var words = $(".js-query").val().toLowerCase().split(/[ ,!.";:-]+/).filter(Boolean);
+	if(words.length === 0) {
+		ifFormEmpty();
+	}
 	for(var i=0; i<words.length; i++) {
 		var word = {
 			word: words[i],
@@ -199,6 +207,14 @@ function createWordObjectArray() {
 
 //watches for user to hit button to begin project
 function watchSubmit() {
+	$('.js-query').keypress(function(event) {
+		if (event.which == 13) {
+			event.preventDefault();
+			createWordObjectArray();
+			emptyScreen();
+			fetchNextDefinitions();
+		}
+	});
 	$('.start-button').on("click", function(e) {
 		e.preventDefault();
 		createWordObjectArray();

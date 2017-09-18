@@ -92,7 +92,6 @@ function displayLastResult() {
 	/*'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' +
 	'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' + */
 	for(var x=0; x < state.words[placeholderVal].definitions.length; x++){
-		console.log(state.words[placeholderVal].definitions[x]);
 		$('ul').append('<li class="card-text"><h3>' + state.words[placeholderVal].definitions[x] + '<h3></li>');
 	}
 	$('ul').append('<a href="#" class="show btn btn-indigo">Show</a>');
@@ -129,7 +128,6 @@ function displayNextResult() {
 	/*'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' +
 	'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' + */
 	for(var x=0; x < state.words[placeholderVal].definitions.length; x++){
-		console.log(state.words[placeholderVal].definitions[x]);
 		$('ul').append('<li class="card-text"><h3>' + state.words[placeholderVal].definitions[x] + '<h3></li>');
 	}
 	$('ul').append('<a href="#" class="show btn btn-indigo">Show</a>');
@@ -146,11 +144,18 @@ function displayNextResult() {
 /*updates the definitions property of each object in state.words array, so they correspond with the correct word
 this function is called as the user displays each word*/
 function updateState(data) {
-	//console.log(data.results.length === 0);
-	//console.log(data.results[0].senses[0].definition !== undefined );
 	var curTerm = state.words[placeholderVal].word;
-	console.log(curTerm);
-	if(data.results.length === 0) {
+	var headwordExists = false;
+	console.log(data);
+	
+	for (var i = 0; i < data.results.length; i++) {
+		if(data.results.find(function(set) {
+			return set.headword === curTerm;
+		})) {
+			headwordExists = true;
+		}
+	}
+	if(data.results.length === 0 || headwordExists === false) {
 		state.words[placeholderVal].definitions.push('Word not found.');
 	}
 	for(var i = 0; i < data.results.length; i++) {
@@ -162,7 +167,7 @@ function updateState(data) {
 			else if (data.results[i].senses[0].signpost !== undefined) {
 				state.words[placeholderVal].definitions.push(data.results[i].senses[0].signpost);
 			}
-		}		
+		} 		
 		}
 
 		else {
@@ -179,7 +184,6 @@ function updateState(data) {
 
 //grabs definitions from API and initiates callback function
 function fetchNextDefinitions() {
-	console.log(state);
 	getDataFromApi(state.words[placeholderVal].word, updateState);
 }
 
@@ -190,7 +194,7 @@ function ifFormEmpty() {
 
 //updates the words array in the state variable with objects.  Each object contains a word and an empty array called 'definitions'
 function createWordObjectArray() {
-	var words = $(".js-query").val().toLowerCase().split(/[ ,!.";:-]+/).filter(Boolean);
+	var words = $(".js-query").val().split(/[ ,!.";:-]+/).filter(Boolean);
 	if(words.length === 0) {
 		ifFormEmpty();
 	}

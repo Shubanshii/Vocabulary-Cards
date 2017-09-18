@@ -146,11 +146,13 @@ function displayNextResult() {
 /*updates the definitions property of each object in state.words array, so they correspond with the correct word
 this function is called as the user displays each word*/
 function updateState(data) {
+	//console.log(data.results.length === 0);
 	//console.log(data.results[0].senses[0].definition !== undefined );
-	console.log(data.results[0].senses[0].definition !== undefined );
-	console.log(data.results);
 	var curTerm = state.words[placeholderVal].word;
 	console.log(curTerm);
+	if(data.results.length === 0) {
+		state.words[placeholderVal].definitions.push('Word not found.');
+	}
 	for(var i = 0; i < data.results.length; i++) {
 		if(data.results[i].senses !== null) {
 			if(data.results[i].headword === curTerm && (data.results[i].senses[0].definition !== undefined || data.results[i].senses[0].signpost !== undefined)) {

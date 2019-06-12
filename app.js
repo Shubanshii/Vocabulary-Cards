@@ -144,9 +144,10 @@ function displayNextResult() {
 /*updates the definitions property of each object in state.words array, so they correspond with the correct word
 this function is called as the user displays each word*/
 function updateState(data) {
+	console.log('logging data from updatestate', data);
 	var curTerm = state.words[placeholderVal].word;
 	var headwordExists = false;
-	console.log(data);
+	console.log('word from update state', data);
 	
 	for (var i = 0; i < data.results.length; i++) {
 		if(data.results.find(function(set) {
@@ -160,7 +161,8 @@ function updateState(data) {
 	}
 	for(var i = 0; i < data.results.length; i++) {
 		if(data.results[i].senses !== null) {
-			if(data.results[i].headword === curTerm && (data.results[i].senses[0].definition !== undefined || data.results[i].senses[0].signpost !== undefined)) {
+			if(data.results[i].headword === curTerm && (data.results[i].senses[0].definition !== undefined || 
+				data.results[i].senses[0].signpost !== undefined)) {
 			if(data.results[i].senses[0].definition !== undefined) {
 				state.words[placeholderVal].definitions.push(data.results[i].senses[0].definition[0]);
 			}
@@ -192,6 +194,25 @@ function ifFormEmpty() {
 	location.reload();
 }
 
+function shuffle(array) {
+	var currentIndex = array.length, temporaryValue, randomIndex;
+  
+	// While there remain elements to shuffle...
+	while (0 !== currentIndex) {
+  
+	  // Pick a remaining element...
+	  randomIndex = Math.floor(Math.random() * currentIndex);
+	  currentIndex -= 1;
+  
+	  // And swap it with the current element.
+	  temporaryValue = array[currentIndex];
+	  array[currentIndex] = array[randomIndex];
+	  array[randomIndex] = temporaryValue;
+	}
+  
+	return array;
+  }
+
 //updates the words array in the state variable with objects.  Each object contains a word and an empty array called 'definitions'
 function createWordObjectArray() {
 	var words = $(".js-query").val().split(/[ ,!.";:-]+/).filter(Boolean);
@@ -205,6 +226,7 @@ function createWordObjectArray() {
 		}
 		state.words.push(word);
 	}
+	shuffle(state.words)
 }
 
 

@@ -146,6 +146,7 @@ this function is called as the user displays each word*/
 function updateState(data) {
 	console.log('logging data from updatestate', data);
 	var curTerm = state.words[placeholderVal].word;
+	console.log('logging curterm', curTerm)
 	var headwordExists = false;
 	console.log('word from update state', data);
 	

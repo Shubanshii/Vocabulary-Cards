@@ -1,5 +1,6 @@
-var baseURL = 'https://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=';
-var suffixURL = '&apikey=wwaDFEhNeysOIwAWZS9fczjtRAnhJFGk';
+
+// var baseURL = 'https://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=';
+// var suffixURL = '&apikey=wwaDFEhNeysOIwAWZS9fczjtRAnhJFGk';
 var placeholderVal = 0;
 var state = {
 	words: []
@@ -8,9 +9,19 @@ var state = {
 
 
 function getDataFromApi(searchTerm, callback) {
-	var URL = baseURL + searchTerm + suffixURL;
-	$.getJSON(URL, callback);
+	// var URL = baseURL + searchTerm + suffixURL;
+	var app_id = "3e10bac3"
+	var language = "en-gb"
+	var word_id = "example"
+	
+	var url = "https://dictionaryapi.com/api/v3/references/learners/json/test?key=557292e0-2038-430d-929b-e805b0afd354"
+	// var app_key = "ecfebb031b51c2f633668ade69251a14"
+	// $.getJSON(url, function(data) {
+	// 	console.log(data)
+	// })
 
+	$.getJSON(url, updateState)
+	
 }
 
 function watchRestart() {
@@ -144,7 +155,8 @@ function displayNextResult() {
 /*updates the definitions property of each object in state.words array, so they correspond with the correct word
 this function is called as the user displays each word*/
 function updateState(data) {
-	console.log('logging data from updatestate', data);
+	console.log('logging shortdef from updatestate', data[0].shortdef);
+	console.log('logging state.words from updatestate', state.words)
 	var curTerm = state.words[placeholderVal].word;
 	console.log('logging curterm', curTerm)
 	var headwordExists = false;
@@ -216,7 +228,10 @@ function shuffle(array) {
 
 //updates the words array in the state variable with objects.  Each object contains a word and an empty array called 'definitions'
 function createWordObjectArray() {
+
 	var words = $(".js-query").val().split(/[ ,!.";:-]+/).filter(Boolean);
+	console.log('words var inside createwordobjectarray', words)
+
 	if(words.length === 0) {
 		ifFormEmpty();
 	}
@@ -226,8 +241,10 @@ function createWordObjectArray() {
 			definitions: []
 		}
 		state.words.push(word);
+		console.log('state  var from inside words.length for loop', state)
 	}
 	shuffle(state.words)
+	
 }
 
 
@@ -235,7 +252,7 @@ function createWordObjectArray() {
 //watches for user to hit button to begin project
 function watchSubmit() {
 	$('.js-query').keypress(function(event) {
-		if (event.which == 13) {
+		if (event.which === 13) {
 			event.preventDefault();
 			createWordObjectArray();
 			emptyScreen();

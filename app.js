@@ -16,7 +16,7 @@ function getDataFromApi(searchTerm, callback) {
 	// var language = "en-gb"
 	// var word_id = "example"
 	
-	var url = "https://dictionaryapi.com/api/v3/references/learners/json/sdfsadfsdf?key=557292e0-2038-430d-929b-e805b0afd354"
+	var url = "https://dictionaryapi.com/api/v3/references/learners/json/sdfsdfwoiddiosdk?key=557292e0-2038-430d-929b-e805b0afd354"
 	// var app_key = "ecfebb031b51c2f633668ade69251a14"
 	// $.getJSON(url, function(data) {
 	// 	console.log(data)
@@ -159,11 +159,16 @@ this function is called as the user displays each word*/
 function updateState(data) {
 	console.log('logging data from updatestate', data)
 	var curTerm = state.words[placeholderVal].word;
+	
 	if(data.length===0) {
 		alert(`${curTerm} not found`)
 		location.reload();
+	} 
+	else if(data[0].shortdef==undefined) {
+		alert(`${curTerm} not found`)
+		location.reload();
 	}
-	console.log('testing shotdef for undefined from updatestate', data[0].shortdef=undefined)
+	console.log('testing shotdef for undefined from updatestate', data[0].shortdef==undefined)
 	console.log('logging shortdef from updatestate', data[0].shortdef);
 	console.log('logging state.words from updatestate', state.words)
 	

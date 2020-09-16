@@ -7,14 +7,16 @@ var state = {
 };
 
 
+// how do i modularize this file?
+
 
 function getDataFromApi(searchTerm, callback) {
 	// var URL = baseURL + searchTerm + suffixURL;
-	var app_id = "3e10bac3"
-	var language = "en-gb"
-	var word_id = "example"
+	// var app_id = "3e10bac3"
+	// var language = "en-gb"
+	// var word_id = "example"
 	
-	var url = "https://dictionaryapi.com/api/v3/references/learners/json/test?key=557292e0-2038-430d-929b-e805b0afd354"
+	var url = "https://dictionaryapi.com/api/v3/references/learners/json/sdfsadfsdf?key=557292e0-2038-430d-929b-e805b0afd354"
 	// var app_key = "ecfebb031b51c2f633668ade69251a14"
 	// $.getJSON(url, function(data) {
 	// 	console.log(data)
@@ -155,45 +157,20 @@ function displayNextResult() {
 /*updates the definitions property of each object in state.words array, so they correspond with the correct word
 this function is called as the user displays each word*/
 function updateState(data) {
+	console.log('logging data from updatestate', data)
+	var curTerm = state.words[placeholderVal].word;
+	if(data.length===0) {
+		alert(`${curTerm} not found`)
+		location.reload();
+	}
+	console.log('testing shotdef for undefined from updatestate', data[0].shortdef=undefined)
 	console.log('logging shortdef from updatestate', data[0].shortdef);
 	console.log('logging state.words from updatestate', state.words)
-	var curTerm = state.words[placeholderVal].word;
-	console.log('logging curterm', curTerm)
-	var headwordExists = false;
-	console.log('word from update state', data);
 	
-	for (var i = 0; i < data.results.length; i++) {
-		if(data.results.find(function(set) {
-			return set.headword === curTerm;
-		})) {
-			headwordExists = true;
-		}
-	}
-	if(data.results.length === 0 || headwordExists === false) {
-		state.words[placeholderVal].definitions.push('Word not found.');
-	}
-	for(var i = 0; i < data.results.length; i++) {
-		if(data.results[i].senses !== null) {
-			if(data.results[i].headword === curTerm && (data.results[i].senses[0].definition !== undefined || 
-				data.results[i].senses[0].signpost !== undefined)) {
-			if(data.results[i].senses[0].definition !== undefined) {
-				state.words[placeholderVal].definitions.push(data.results[i].senses[0].definition[0]);
-			}
-			else if (data.results[i].senses[0].signpost !== undefined) {
-				state.words[placeholderVal].definitions.push(data.results[i].senses[0].signpost);
-			}
-		} 		
-		}
-
-		else {
-			console.log(false);
-		}
-	}
-	if(placeholderVal === state.words.length - 1){
-		displayLastResult();
-	}else {	
-		displayNextResult();
-	}
+	console.log('logging curterm', curTerm)
+	state.words[placeholderVal]
+	
+	
 
 }
 

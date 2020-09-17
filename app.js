@@ -1,26 +1,14 @@
+// how do i modularize this file?
 
-// var baseURL = 'https://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=';
-// var suffixURL = '&apikey=wwaDFEhNeysOIwAWZS9fczjtRAnhJFGk';
 var placeholderVal = 0;
 var state = {
 	words: []
 };
 
 
-// how do i modularize this file?
-
-
 function getDataFromApi(searchTerm, callback) {
-	// var URL = baseURL + searchTerm + suffixURL;
-	// var app_id = "3e10bac3"
-	// var language = "en-gb"
-	// var word_id = "example"
 	
 	var url = "https://dictionaryapi.com/api/v3/references/learners/json/" + searchTerm + "?key=557292e0-2038-430d-929b-e805b0afd354"
-	// var app_key = "ecfebb031b51c2f633668ade69251a14"
-	// $.getJSON(url, function(data) {
-	// 	console.log(data)
-	// })
 
 	$.getJSON(url, updateState)
 	
@@ -31,38 +19,6 @@ function watchRestart() {
 		location.reload();
 	});
 }
-
-/*function displayLastResult() {
-	$('main').html(cardTemplate);
-	$('.show').on('click', function(){
-		$('h1').removeClass('hidden');
-		$('.show').replaceWith('<a href="#" class="restart btn btn-red">Home Page</a>');
-		watchRestart();
-
-	});
-}*/
-
-/*function watchNext() {
-	$('.next').on('click', function() {
-		displayLastResult();
-	});
-}*/
-
-/*displays definitions.  I'm considering having the definition appear on the same screen.  
-Also displays the button and includes its functionality*/
-
-
-/*function displayNextResult() {
-	$('body').html(cardTemplate);
-	$('.show').on('click', function(){
-		$('h1').removeClass('hidden');
-		$('.show').replaceWith('<a href="#" class="next btn btn-red">Next</a>');
-		watchNext();
-
-	});
-
-
-}*/
 
 /*empties screen to make room for the next screen's content.  Empties children, descendants and texts from 'main' and eliminates
 header and footer*/
@@ -100,10 +56,10 @@ function displayLastResult() {
 		'</div>' +
 	'</main>'
 	);
-	//does this risk popping up information in front of user?
+	
+	
 	$('body').html(cardTemplate);
-	/*'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' +
-	'<li class="card-text"><h3>The definitions of the word are the definitions of the word</h3></li>' + */
+
 	for(var x=0; x < state.words[placeholderVal].definitions.length; x++){
 		$('ul').append('<li class="card-text"><h3>' + state.words[placeholderVal].definitions[x] + '<h3></li>');
 	}
@@ -177,11 +133,6 @@ function updateState(data) {
 		}
 		
 	}
-	// console.log('testing shotdef for undefined from updatestate', data[0].shortdef==undefined)
-	// console.log('logging shortdef from updatestate', data[0].shortdef);
-	console.log('logging state.words from updatestate', state.words)
-	
-	// console.log('logging curterm', curTerm)
 	
 	if(placeholderVal === state.words.length - 1){
 		displayLastResult();
@@ -236,7 +187,6 @@ function createWordObjectArray() {
 			definitions: []
 		}
 		state.words.push(word);
-		console.log('state  var from inside words.length for loop', state)
 	}
 	shuffle(state.words)
 	
@@ -259,7 +209,6 @@ function watchSubmit() {
 		createWordObjectArray();
 		emptyScreen();
 		fetchNextDefinitions();
-		//displayNextResult();
 
 	})
 }

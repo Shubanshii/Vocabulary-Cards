@@ -7,7 +7,8 @@ var state = {
 
 
 function getDataFromApi(searchTerm, callback) {
-	
+	// THIS APP IS FOR PERSONAL USE.  I BUILT IT TO LEARN HOW TO MAKE API CALLS
+	// AND USE THE DATA
 	var url = "https://dictionaryapi.com/api/v3/references/learners/json/" + searchTerm + "?key=557292e0-2038-430d-929b-e805b0afd354"
 
 	$.getJSON(url, updateState)

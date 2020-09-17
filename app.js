@@ -183,11 +183,11 @@ function updateState(data) {
 	
 	// console.log('logging curterm', curTerm)
 	
-	// if(placeholderVal === state.words.length - 1){
-	// 	displayLastResult();
-	// }else {	
-	// 	displayNextResult();
-	// }
+	if(placeholderVal === state.words.length - 1){
+		displayLastResult();
+	}else {	
+		displayNextResult();
+	}
 	
 
 }

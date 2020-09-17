@@ -16,7 +16,7 @@ function getDataFromApi(searchTerm, callback) {
 	// var language = "en-gb"
 	// var word_id = "example"
 	
-	var url = "https://dictionaryapi.com/api/v3/references/learners/json/sdfsdfwoiddiosdk?key=557292e0-2038-430d-929b-e805b0afd354"
+	var url = "https://dictionaryapi.com/api/v3/references/learners/json/" + searchTerm + "?key=557292e0-2038-430d-929b-e805b0afd354"
 	// var app_key = "ecfebb031b51c2f633668ade69251a14"
 	// $.getJSON(url, function(data) {
 	// 	console.log(data)
@@ -162,19 +162,32 @@ function updateState(data) {
 	
 	if(data.length===0) {
 		alert(`${curTerm} not found`)
-		location.reload();
+		location.reload()
 	} 
 	else if(data[0].shortdef==undefined) {
 		alert(`${curTerm} not found`)
-		location.reload();
+		location.reload()
+	} else {
+		// state.words[placeholderVal].definitions.push(data.shortdef);
+		// is there a way to just add the array all at once instead of iterating 
+		// through it?
+		for(var i = 0; i < data[0].shortdef.length; i++) {
+			state.words[placeholderVal].definitions.push(data[0].shortdef[i])
+			console.log('logging shortdef from inside else statement ', data[0].shortdef[i])
+		}
+		
 	}
-	console.log('testing shotdef for undefined from updatestate', data[0].shortdef==undefined)
-	console.log('logging shortdef from updatestate', data[0].shortdef);
+	// console.log('testing shotdef for undefined from updatestate', data[0].shortdef==undefined)
+	// console.log('logging shortdef from updatestate', data[0].shortdef);
 	console.log('logging state.words from updatestate', state.words)
 	
-	console.log('logging curterm', curTerm)
-	state.words[placeholderVal]
+	// console.log('logging curterm', curTerm)
 	
+	// if(placeholderVal === state.words.length - 1){
+	// 	displayLastResult();
+	// }else {	
+	// 	displayNextResult();
+	// }
 	
 
 }
